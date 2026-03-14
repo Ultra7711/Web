@@ -355,15 +355,22 @@ YUDONG COFFEE  流东咖啡
 
 ---
 
-## 6. 기술 스택
+## 6. 기술 스택 제안 (추천: **React + Next.js**)
 
-| 항목 | 선택 | 이유 |
-|------|------|------|
-| 프레임워크 | HTML + CSS + Vanilla JS | 빠른 로딩, SNS 링크 공유 최적화 |
-| 폰트 | Google Fonts (Noto Serif KR + Playfair Display) | 한·중 병기 최적 |
-| 애니메이션 | CSS transition + Intersection Observer | 가볍고 매끄러운 스크롤 애니메이션 |
-| 이미지 | WebP 포맷 + lazy loading | 중국 모바일 환경 대응 |
-| 반응형 | Mobile First | 핵심 타겟 스마트폰 사용자 (샤오홍슈·더우인 유입) |
+현재 기획된 요구사항(단순 랜딩)만 보면 HTML/CSS/JS도 훌륭하지만, **향후 Admin 관리자 페이지(CMS 연동)와 다국어(i18n) 확장 계획**을 고려할 때 **React / Next.js** 환경을 강력히 추천합니다.
+
+| 항목 | 선택 | 이유 (Next.js 추천 사유) |
+|------|------|--------------------------|
+| **프레임워크** | **Next.js (React)** | **SEO 최적화**(SNS 공유 시 유리), **다국어 라우팅**(`?lang=ko` 등) 기본 지원, JSON/API 연동 용이 |
+| **스타일링** | Vanilla CSS (또는 CSS Modules) | 별도 프레임워크 락인 없이 순수 CSS로 유연하고 디테일한 디자인 제어 |
+| **애니메이션** | Framer Motion (또는 CSS) | 스크롤 트리거, 라우터 전환 등 복잡한 애니메이션을 선언적으로 쉽게 구현 가능 |
+| **이미지** | `next/image` 컴포넌트 | WebP 자동 변환, Lazy Loading, 반응형 리사이징 기본 제공 (중국 모바일 환경 최적화) |
+| **상태 관리** | React Context API | 메뉴 데이터 연동 및 언어 토글 시 전역 상태 관리 용이 |
+
+**Vanilla HTML/JS 대비 Next.js의 압도적 장점:**
+1. **CMS 연동의 용이성**: 추후 메뉴 데이터를 Admin에서 받아올 때(API Fetching 등), React 컴포넌트로 데이터 매핑을 하는 것이 훨씬 깔끔하고 유지보수가 쉽습니다.
+2. **다국어(i18n) 확장**: HTML/JS로 다국어를 생코딩하면 DOM 조작이 복잡해지지만, Next.js와 i18n 라이브러리를 쓰면 언어 파일(JSON) 매핑이 매우 간편합니다.
+3. **SEO & 공유**: 서버 사이드 렌더링(SSR) 적용으로 위챗, 샤오홍슈 등에서 링크 공유 시 썸네일과 메타데이터가 완벽하게 노출됩니다.
 
 ---
 
@@ -403,25 +410,39 @@ YUDONG COFFEE  流东咖啡
 | 4 | `menu-sungsandong.webp` | 메뉴 카드 | 송산동 커피 (피넛크림) |
 | 5 | `menu-salt.webp` | 메뉴 카드 | 소금커피 (제주 소금 크림) |
 | 6 | `menu-hareubang.webp` | 메뉴 카드 | 하르방 커피 (돌하르방 비주얼) |
+| 7 | `menu-tangerine.webp` | 메뉴 카드 | 제주 감귤 라떼 |
+| 8 | `menu-basalt.webp` | 메뉴 카드 | 현무암 블랙 커피 |
+| 9 | `menu-canola.webp` | 메뉴 카드 | 유채꽃 크림라떼 |
 
 ---
 
 ## 9. 파일 구조
 
 ```
-c:\Git\Web\
-├── index.html          ← 메인 HTML (전체 섹션)
-├── style.css           ← 디자인 토큰 + 레이아웃 + 반응형
-├── script.js           ← Intersection Observer 애니메이션 + 네비게이션
-├── yudong.pdf          ← 원본 제안서 (참고용)
-├── yudong_landing_page_plan.md  ← 본 문서
-└── resource/
-    ├── hero-bg.webp
-    ├── jeju-nature.webp
-    ├── cafe-interior.webp
-    ├── menu-sungsandong.webp
-    ├── menu-salt.webp
-    └── menu-hareubang.webp
+c:\Git\Web\ (Next.js Project)
+├── app/
+│   ├── page.tsx          ← 메인 뷰 (전체 섹션)
+│   ├── layout.tsx        ← 글로벌 레이아웃 + 메타데이터
+│   └── globals.css       ← 디자인 토큰 + 글로벌 반응형 스타일
+├── components/
+│   ├── Header.tsx        ← 투명 네비게이션 + 언어 토글
+│   ├── HeroSection.tsx
+│   ├── SignatureMenu.tsx ← 6종 메뉴 그리드 (향후 CMS 연동)
+│   └── ...
+├── data/
+│   └── menu.json         ← 1차 렌더링용 정적 데이터
+├── yudong_landing_page_plan.md
+└── public/
+    └── images/
+        ├── hero-bg.webp
+        ├── jeju-nature.webp
+        ├── cafe-interior.webp
+        ├── menu-sungsandong.webp
+        ├── menu-salt.webp
+        ├── menu-hareubang.webp
+        ├── menu-tangerine.webp
+        ├── menu-basalt.webp
+        └── menu-canola.webp
 ```
 
 ---
@@ -438,5 +459,3 @@ c:\Git\Web\
 | **6단계** | 이미지 에셋 생성 (AI) + 최종 QA | — |
 
 ---
-
-> **다음 단계**: 이 계획서 확인 후, 실제 HTML/CSS/JS 코드 제작을 즉시 시작합니다.
