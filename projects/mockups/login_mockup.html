@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yudong Coffee - 探索纯粹香醇</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #7c5a43;
+            --accent-color: #d4a373;
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --muted-text: #666666;
+            --border-color: #eeeeee;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* Mock Landing Page Background */
+        .landing-page {
+            width: 100%;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .landing-page::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .header {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .btn-open-login {
+            background: white;
+            color: black;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-open-login:hover {
+            transform: scale(1.05);
+            background: #f0f0f0;
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-text h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Slide-over Drawer UI */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            height: 100%;
+            background: white;
+            z-index: 101;
+            padding: 40px 60px;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .drawer.active {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            transition: opacity 0.3s;
+        }
+
+        .btn-close:hover {
+            opacity: 0.6;
+        }
+
+        .login-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-content h2 {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        /* Social Login Buttons */
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .social-btn:hover {
+            background: #f9f9f9;
+            border-color: #bbb;
+        }
+
+        .social-btn.wechat { color: #07c160; border-color: #07c160; }
+        .social-btn.alipay { color: #1677ff; border-color: #1677ff; }
+        .social-btn.weibo { color: #e6162d; border-color: #e6162d; }
+
+        .social-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0 30px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .divider span {
+            padding: 0 15px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            font-size: 15px;
+            color: #999;
+            cursor: pointer;
+            padding-bottom: 8px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: black;
+            font-weight: 600;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: black;
+        }
+
+        /* Inputs */
+        .auth-section {
+            display: none;
+        }
+
+        .auth-section.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: black;
+        }
+
+        .sms-wrapper {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-send {
+            padding: 0 20px;
+            background: white;
+            border: 1px solid black;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .btn-continue {
+            width: 100%;
+            padding: 18px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn-continue:hover {
+            background: #000;
+        }
+
+        /* QR Section */
+        .qr-content {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .qr-box {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 15px;
+            border: 1px solid #eee;
+            padding: 10px;
+            background: white;
+        }
+
+        .qr-placeholder {
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5 url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iOCIgaGVpZ2h0PSI4Ii8+PHJlY3QgeD0iMiIgeT0iMTQiIHdpZHRoPSI4IiBoZWlnaHQ9IjgiLz48cmVjdCB4PSIxNCIgeT0iMiIgdmlldGg9IjgiIGhlaWdodD0iOCIvPjxwYXRoIGQ9Ik0xNCAxNEgyMFYyMEgxNFYxNFoiLz48L3N2Zz4=') center/60% auto no-repeat;
+        }
+
+        .qr-tip {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Legal */
+        .legal {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .legal a {
+            color: black;
+            text-decoration: underline;
+        }
+
+        .legal p {
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .drawer {
+                width: 100%;
+                right: -100%;
+                padding: 30px;
+            }
+            .hero-text h1 {
+                font-size: 3.5rem;
+            }
+            .header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Landing Page Content -->
+    <div class="landing-page">
+        <div class="header">
+            <a href="#" class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="16" r="16" fill="white"/>
+                    <path d="M12 21C12 21 13 23 16 23C19 23 20 21 20 21" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Yudong Coffee
+            </a>
+            <div class="nav-links">
+                <button class="btn-open-login" onclick="toggleDrawer(true)">登录 / 注册</button>
+            </div>
+        </div>
+        <div class="hero-text">
+            <h1>Yudong Coffee</h1>
+            <p>探索每一口纯粹的香醇。中国首店即将开业。</p>
+        </div>
+    </div>
+
+    <!-- Overlay & Drawer -->
+    <div class="overlay" id="overlay" onclick="toggleDrawer(false)"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <button class="btn-close" onclick="toggleDrawer(false)">
+                关闭 ✕
+            </button>
+        </div>
+
+        <div class="login-content">
+            <h2>登录或注册<br>您的账号</h2>
+
+            <div class="social-buttons">
+                <button class="social-btn wechat">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm5.1,12.5a.6.6,0,0,1,0,1.1c-.8.4-2.1,1.1-4.7,1.1S8.5,16,7.7,15.6a.6.6,0,0,1,0-1.1c.6-.3,1.8-.8,4.3-.8S16.5,14.2,17.1,14.5Zm0-4.1a.6.6,0,0,1,0,1.1c-.8.4-2.1,1.1-4.7,1.1S8.5,11.9,7.7,11.5a.6.6,0,0,1,0-1.1c.6-.3,1.8-.8,4.3-.8S16.5,9.9,17.1,10.4Z"/></svg>
+                    使用微信一键登录
+                </button>
+                <button class="social-btn alipay">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 14H7.5v-1.5h9V16zm0-3.5H7.5V11h9v1.5zm0-3.5H7.5V7.5h9V9z"/></svg>
+                    使用支付宝登录
+                </button>
+                <button class="social-btn weibo">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 11.5L12 15.4l-3.5-1.9v-3l3.5-1.9 3.5 1.9v3z"/></svg>
+                    使用新浪微博登录
+                </button>
+            </div>
+
+            <div class="divider">
+                <span>或使用手机号</span>
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" id="tab-sms" onclick="switchTab('sms')">验证码登录</div>
+                <div class="tab" id="tab-qr" onclick="switchTab('qr')">扫码登录</div>
+            </div>
+
+            <!-- SMS Section -->
+            <div id="sms-section" class="auth-section active">
+                <div class="input-group">
+                    <input type="text" placeholder="手机号码 (+86)">
+                </div>
+                <div class="input-group sms-wrapper">
+                    <input type="text" placeholder="短信验证码">
+                    <button class="btn-send">获取</button>
+                </div>
+                <button class="btn-continue">继续</button>
+            </div>
+
+            <!-- QR Section -->
+            <div id="qr-section" class="auth-section">
+                <div class="qr-content">
+                    <div class="qr-box">
+                        <div class="qr-placeholder"></div>
+                    </div>
+                    <p class="qr-tip">使用微信扫描二维码安全登录</p>
+                </div>
+            </div>
+
+            <div class="legal">
+                <p>我们不使用密码。请输入您的手机号码，我们将向您发送验证码。点击链接即可从任何设备登录。</p>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="agree">
+                    <label for="agree">
+                        我已阅读并同意 Yudong Coffee 的 <a href="#">服务条款</a> 和 <a href="#">隐私政策</a>。
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleDrawer(open) {
+            const overlay = document.getElementById('overlay');
+            const drawer = document.getElementById('drawer');
+            if (open) {
+                overlay.classList.add('active');
+                drawer.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            } else {
+                overlay.classList.remove('active');
+                drawer.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function switchTab(type) {
+            const tabSms = document.getElementById('tab-sms');
+            const tabQr = document.getElementById('tab-qr');
+            const smsSection = document.getElementById('sms-section');
+            const qrSection = document.getElementById('qr-section');
+
+            if (type === 'sms') {
+                tabSms.classList.add('active');
+                tabQr.classList.remove('active');
+                smsSection.classList.add('active');
+                qrSection.classList.remove('active');
+            } else {
+                tabQr.classList.add('active');
+                tabSms.classList.remove('active');
+                qrSection.classList.add('active');
+                smsSection.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
